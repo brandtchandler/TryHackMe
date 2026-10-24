@@ -1,0 +1,66 @@
+# TryHackMe - Junior Security Analyst Intro
+
+**Platform**: TryHackMe  
+**Difficulty**: Easy  
+**Category**: SOC / Blue Team  
+**Date**: 23 OCT 2026  
+**Time spent**: ~30 minutes (including write-up)  
+**Tags**: `#SOC` `#JuniorSecurityAnalyst` `#Triage` `#BlueTeam` `#SIEM` `#TryHackMe`
+
+---
+
+## Summary
+
+Introductory room that walks you through a day in the life of a Junior Security Analyst (SOC Level 1 / Triage Specialist). It covers the role’s responsibilities, the structure of a Security Operations Center (SOC), and a short interactive scenario where you investigate alerts, identify a malicious IP, escalate the incident, and block the threat.
+
+## Key Takeaways / Personal Takeaways
+
+- A Junior Security Analyst (Tier 1) primarily acts as a **Triage Specialist** — monitoring alerts, performing initial investigation, creating tickets, and escalating when needed.
+- Daily duties typically include monitoring SIEM alerts, basic investigation, tool configuration, and collaboration within a 24/7 SOC environment.
+- The SOC is usually structured in tiers:
+  - **Tier 1** – Triage / Junior Analyst
+  - **Tier 2** – Incident Responder / deeper investigation
+  - **Tier 3** – Threat Hunter / advanced analysis
+- Real work involves quick decision-making: determine if an alert is true positive, escalate appropriately, and apply basic containment (e.g., blocking an IP).
+
+---
+
+## Learning Objectives
+
+- Understand the role and responsibilities of a Junior Security Analyst
+- Learn the basic structure and purpose of a Security Operations Center (SOC)
+- Experience a simplified day-in-the-life scenario involving alert triage and escalation
+
+---
+
+## Learning Objectives & Tasks
+
+### Task 1 – Junior Security Analyst Journey
+Introduces the career path and daily responsibilities of a Junior Security Analyst / Triage Specialist. Covers required skills (networking basics, operating systems, web applications) and common qualifications (e.g., CompTIA Security+ is often desired).
+
+### Task 2 – Security Operations Center (SOC)
+Explains what a SOC is and introduces the tiered model and key colleagues (Senior Analyst, SOC Engineer, SOC Manager, Incident Responder). Emphasizes continuous monitoring, prevention, investigation, and response.
+
+### Task 3 – A Day in the Life of a Security Analyst
+Interactive lab:
+- Review alerts in a simulated SIEM dashboard
+- Identify the malicious IP address
+- Escalate the incident to the appropriate person (Senior Analyst)
+- Block the malicious IP on the firewall
+- Observe the final message / flag left by the attacker
+
+---
+
+## Practical Notes
+
+- Role title to remember: **Triage Specialist**
+- Typical escalation path: Junior Analyst → Senior Analyst / Tier 2
+- Core activities: Monitor → Investigate → Ticket → Escalate / Contain
+- Tools commonly referenced: SIEM, firewall, basic IP reputation checks
+
+---
+
+## References
+
+- TryHackMe room: https://tryhackme.com/room/jrsecanalystintrouxo  
+- Related path: SOC Level 1  
