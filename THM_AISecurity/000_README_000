@@ -1,0 +1,25 @@
+# TryHackMe – AI Security Path
+
+Personal write-ups and notes from the TryHackMe **AI Security** learning path.
+
+These notes document my progress through AI/ML security topics including prompt engineering, threat modelling, system reconnaissance, prompt injection, securing AI systems, and related rooms.
+
+---
+
+## Format
+
+Each write-up follows a consistent structure:
+
+- **Metadata** — Platform, difficulty, category, date, time spent, and tags  
+- **Summary** — Short overview of the room  
+- **Key Takeaways** — Main lessons and personal insights  
+- **Learning Objectives** — What the room aims to teach  
+- **Tasks Breakdown** — Concise notes per task  
+- **Practical Notes** — Useful commands, observations, or checklists  
+- **References** — Room link and external resources  
+
+---
+
+## Notes
+
+Write-ups are written for personal reference and revision. They are not full step-by-step solutions and intentionally avoid heavy spoilers where possible.
