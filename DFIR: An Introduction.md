@@ -3,8 +3,8 @@
 **Platform**: TryHackMe  
 **Difficulty**: Easy  
 **Category**: Digital Forensics & Incident Response  
-**Date**: —  
-**Time spent**: —  
+**Date**: 13OCT2026 
+**Time spent**: 2 hours
 **Tags**: `#DigitalForensics` `#IncidentResponse` `#EvidencePreservation` `#ChainofCustody` `#PICERL` `#NISTSP800-61` `#Forensics`
 
 First module in the Digital Forensics and Incident Response learning path. Foundational entry point that builds on general defensive concepts (Pre-Security / Introduction to Cyber Security) and introduces the structured process of investigating and responding to a breach.
