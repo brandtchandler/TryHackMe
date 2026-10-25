@@ -1,0 +1,76 @@
+# TryHackMe - The CIA Triad
+
+**Platform**: TryHackMe  
+**Difficulty**: Easy  
+**Category**: Fundamentals / Security Principles  
+**Date**: 25 OCT 2026  
+**Time spent**: ~20–30 minutes (including write-up)  
+**Tags**: `#CIATriad` `#Confidentiality` `#Integrity` `#Availability` `#SecurityFundamentals` `#TryHackMe`
+
+---
+
+## Summary
+
+Foundational room that introduces the **CIA Triad** — the three core principles that cybersecurity is built to protect: **Confidentiality**, **Integrity**, and **Availability**. The room explains each pillar with real-world analogies, shows how they apply to digital systems, and finishes with a hands-on sorting exercise that reinforces the security mindset.
+
+## Key Takeaways / Personal Takeaways
+
+- Cybersecurity is not just about stopping attacks — it is about protecting three specific properties of data and systems.
+- **Confidentiality** → Only authorized people can access the data.
+- **Integrity** → Data is not modified without authorization and remains trustworthy.
+- **Availability** → Authorized users can access data and services when they need them.
+- The CIA Triad is more than definitions; it is a **security mindset**. When an incident occurs, analysts ask which pillar was affected to understand impact and choose the right response.
+- Balancing the three pillars is essential — over-protecting one can harm another.
+
+---
+
+## Learning Objectives
+
+- Understand the three pillars of cybersecurity
+- Explain the purpose of Confidentiality, Integrity, and Availability
+- Recognize which pillar is affected in simple scenarios
+- Apply a security mindset when assessing incidents
+
+---
+
+## Learning Objectives & Tasks
+
+### Task 1 – Introduction
+Sets the stage for the room. Explains that cybersecurity ultimately protects three key aspects of digital information and introduces the learning objectives.
+
+### Task 2 – Understanding the CIA Triad
+Detailed breakdown of each pillar with everyday and digital examples:
+
+- **Confidentiality** — Prevents unauthorized access (e.g., encryption, access controls)
+- **Integrity** — Prevents unauthorized modification (e.g., hashing, digital signatures, change controls)
+- **Availability** — Ensures systems and data are accessible when needed (e.g., redundancy, DDoS protection, backups)
+
+Includes recognition questions to confirm understanding of each pillar.
+
+### Task 3 – The Security Mindset
+Explains that the CIA Triad is a practical decision-making framework.  
+Hands-on interactive exercise: classify nine different security incidents by dragging them into the correct pillar (Confidentiality, Integrity, or Availability).
+
+### Task 4 – Conclusion
+Recap of key terminology and confirmation that the CIA Triad forms the foundation for many later cybersecurity concepts.
+
+---
+
+## Practical Notes
+
+| Pillar            | Focus                              | Example Impact                          |
+|-------------------|------------------------------------|-----------------------------------------|
+| Confidentiality   | Unauthorized access                | Data leak, credential theft             |
+| Integrity         | Unauthorized modification          | Altered records, tampered transactions  |
+| Availability      | Systems/services unavailable       | Downtime, DDoS, ransomware lockout      |
+
+When analyzing any incident, ask:
+1. Was data exposed? → Confidentiality  
+2. Was data changed? → Integrity  
+3. Were services unavailable? → Availability  
+
+---
+
+## References
+
+- TryHackMe room: https://tryhackme.com/room/theciatriad  
