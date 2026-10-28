@@ -3,23 +3,24 @@
 **Platform**: TryHackMe  
 **Difficulty**: Medium  
 **Category**: AI Security  
-**Date**: 21 OCT 2026  
-**Time spent**: ~1 hour (including write-up)  
+**Date**: 27 OCT 2026  
+**Time spent**: ~2 hour (including write-up)  
 **Tags**: `#PromptInjection` `#LLMSecurity` `#AISecurity` `#OWASP` `#DirectInjection` `#IndirectInjection` `#TryHackMe`
 
 ---
 
 ## Summary
 
-Core room in the AI Security path that covers one of the most important and misunderstood attack classes against generative AI systems: **prompt injection**. You learn how LLMs actually process instructions, why the system/user hierarchy is only a soft convention, and how both direct and indirect injection techniques work. The room ends with practical chatbot challenges that demonstrate real-world impact.
+Core room in the AI Security path covering one of the most important attack classes against generative AI systems: **prompt injection**. The room explains how LLMs process instructions, why the system/user hierarchy is only a soft convention, and demonstrates both **direct** and **indirect** injection techniques with real-world examples and hands-on chatbot challenges.
 
 ## Key Takeaways / Personal Takeaways
 
 - An LLM does not truly “understand” roles or hierarchy — it only sees a single stream of tokens and predicts the next one. This is the root cause of prompt injection.
-- **Direct prompt injection** places malicious instructions in the visible user input. **Indirect prompt injection** hides them in external content (documents, emails, web pages, calendar events, RAG results) that the model later ingests.
-- OWASP ranks Prompt Injection as the #1 risk in the LLM Top 10 for good reason — it is easy to attempt and hard to eliminate completely.
-- Real-world examples (Bing “Sydney” leak, dealership chatbot selling a car for $1, EchoLeak-style zero-click attacks) show this is not a theoretical issue.
-- Defences must assume the model can be influenced; relying solely on system-prompt wording is insufficient.
+- **Direct prompt injection** places malicious instructions in the visible user input.
+- **Indirect prompt injection** hides instructions in external content (documents, emails, web pages, calendar events, RAG results) that the model later ingests.
+- OWASP ranks Prompt Injection as the #1 risk in the LLM Top 10.
+- Real-world cases (Bing “Sydney” system prompt leak, dealership chatbot selling a car for $1, EchoLeak-style zero-click attacks) show this is a practical, high-impact issue.
+- Relying only on system-prompt wording is not sufficient defence.
 
 ---
 
@@ -28,7 +29,7 @@ Core room in the AI Security path that covers one of the most important and misu
 - Understand how LLMs process context and follow (or fail to follow) instructions
 - Explain what prompt injection is and why it works
 - Differentiate between direct and indirect prompt injection
-- Recognise real-world impact through case studies and hands-on exploitation
+- Recognise real-world impact through case studies
 - Apply basic injection techniques against chatbots in a controlled environment
 
 ---
@@ -36,34 +37,32 @@ Core room in the AI Security path that covers one of the most important and misu
 ## Learning Objectives & Tasks
 
 ### Task 1 – Introduction
-Sets the stage for the room. Prompt injection is one of the earliest and most widely discussed AI attack types, yet it remains poorly understood by many teams. Introduces the learning path for the room.
+Sets the stage for the room. Prompt injection is one of the earliest and most widely discussed AI attack types, yet it remains poorly understood by many teams.
 
-### Task 2 – How LLMs Follow Instructions
-Covers the fundamental mechanics:
-- Context window (everything the model can “see”)
+### Task 2 – How LLMs Follow Instructions1
+Keywords: System Prompts, Developer Prompts, User Prompts, Retrieved Context, Tool Outputs.
+Covers fundamental mechanics:
+- Context window
 - System prompt vs user prompt
-- Structured formats such as ChatML (`<|im_start|>`, `<|im_end|>`)
-- Next-token prediction — the only real operation the model performs
+- Structured formats such as ChatML
+- Next-token prediction
 
 Key point: the model processes **all** input as tokens. There is no hard technical boundary between “system” and “user” instructions.
 
 ### Task 3 – What is Prompt Injection?
-Defines the attack class: untrusted user input is concatenated with a trusted developer/system prompt, causing the model to follow the attacker’s instructions instead of the intended ones.  
-Highlights that OWASP ranks it as the number-one risk in the LLM Top 10.
+Defines the attack class: untrusted user input is concatenated with a trusted developer/system prompt, causing the model to follow the attacker’s instructions instead of the intended ones. Highlights that OWASP ranks it as the number-one LLM risk.
 
 ### Task 4 – Prompt Injection in Action
-Walks through real incidents and demonstrates **direct** prompt injection techniques (including format-based / markup injection).  
-Hands-on challenge involving a sales chatbot that can be manipulated into selling a high-value item for a token price.
+Walks through real incidents and demonstrates **direct** prompt injection techniques (including format-based / markup injection). Includes a hands-on challenge with a sales chatbot.
 
 ### Task 5 – Indirect Prompt Injection
-Covers the more dangerous variant: malicious instructions hidden in external content that the model later retrieves or processes (documents, emails, calendar events, web pages, RAG results).  
-Introduces zero-click / no-interaction scenarios and real-world cases such as EchoLeak-style attacks.
+Covers the more dangerous variant where malicious instructions are hidden in external content that the model later retrieves or processes. Introduces zero-click / no-interaction scenarios.
 
 ### Task 6 – Practical
-Hands-on lab where you apply both direct and indirect techniques against live chatbots to achieve specific goals (e.g., leaking sensitive information or overriding intended behaviour).
+Hands-on lab applying both direct and indirect techniques against live chatbots to achieve specific goals (e.g., leaking sensitive information or overriding intended behaviour).
 
 ### Task 7 – Conclusion
-Recap of the core concepts and a bridge to defensive techniques covered in later rooms (Prompt Defence, etc.).
+Recap of core concepts and bridge to defensive techniques covered in later rooms (Prompt Defence, etc.).
 
 ---
 
@@ -80,4 +79,4 @@ Recap of the core concepts and a bridge to defensive techniques covered in later
 
 - TryHackMe room: https://tryhackme.com/room/promptinjectionls  
 - OWASP LLM Top 10: https://genai.owasp.org/  
-- Related rooms: Prompt Defence, Jailbreaking, LLM Security
+- Related rooms: Prompt Defence, Jailbreaking, LLM Security  
