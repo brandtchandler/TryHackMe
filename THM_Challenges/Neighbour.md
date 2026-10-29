@@ -33,9 +33,8 @@ Neighbour is a beginner-focused web challenge designed to demonstrate a classic 
 1. Navigate to the target web server:
    http://TARGET_IP
 2. A minimalist login form is displayed with a hint prompting for shortcut (Ctrl+U).
-3. This is normal text, but <span style="color: #e74c3c; font-weight: bold;">this alert is bright red</span>.
-<span style="color: red;">3. View the HTML page source (Ctrl + U or right-click, then View Page Source). </span> 
-[!IMPORTANT]4. Near the bottom of the HTML, an unremoved developer comment discloses testing credentials and user presence:  
+3. <u>View the HTML page source (Ctrl + U or right-click, then View Page Source). </u> 
+4. Near the bottom of the HTML, an unremoved developer comment discloses testing credentials and user presence:  
    use guest:guest credentials until registration is fixed. "admin" user account is off limits!!!!!
 
 ### 2. Low-Privilege Authentication
