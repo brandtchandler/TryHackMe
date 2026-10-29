@@ -41,8 +41,8 @@ Neighbour is a beginner-focused web challenge designed to demonstrate a classic 
 
 1. Return to the login portal.
 2. Enter the discovered credentials:
-   - Username: guest
-   - Password: guest
+   - Username: *****
+   - Password: *****
 3. Upon authentication, the web application redirects to:
    http://TARGET_IP/profile.php?user=guest
 
