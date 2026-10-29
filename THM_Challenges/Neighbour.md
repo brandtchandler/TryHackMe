@@ -33,7 +33,7 @@ Neighbour is a beginner-focused web challenge designed to demonstrate a classic 
 1. Navigate to the target web server:
    http://TARGET_IP
 2. A minimalist login form is displayed with a hint prompting for shortcut (Ctrl+U).
-3. <u>View the HTML page source (Ctrl + U or right-click, then View Page Source). </u> 
+3. View the HTML page source (Ctrl + U or right-click, then View Page Source).  
 4. Near the bottom of the HTML, an unremoved developer comment discloses testing credentials and user presence:  
    use guest:guest credentials until registration is fixed. "admin" user account is off limits!!!!!
 
