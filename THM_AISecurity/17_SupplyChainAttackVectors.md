@@ -88,25 +88,6 @@ When consuming AI capabilities upstream via remote APIs:
 
 ---
 
-## Question & Answer Reference
-
-| # | Question | Answer |
-| :-: | :--- | :--- |
-| **1** | Python method pickle calls for reconstruction instructions | `__reduce__` |
-| **2** | Built-in module commonly abused in pickle payloads | `os` |
-| **3** | Attack type left untouched by SafeTensors conversion | architecture-level attacks |
-| **4** | Suspicious layer type that survives conversion from `.h5` | `Lambda` |
-| **5** | Module for safe pickle disassembly | `pickletools` |
-| **6** | Opcode that executes the function from `STACK_GLOBAL` | `REDUCE` |
-| **7** | Public package overrides internal package of same name | dependency confusion |
-| **8** | Technique of registering closely resembling names | typosquatting |
-| **9** | Vector used by creating `trustworthy-ai-lab` on Hugging Face | repository manipulation |
-| **10** | Fallback vector if pickle payload is blocked | dependency confusion |
-| **11** | Model behind an API endpoint changed without notice | silent model update |
-| **12** | Untrusted artefact that can alter LLM behaviour across apps | prompt template |
-
----
-
 ## Defensive Perspective
 
 - Default to SafeTensors formats over pickle-based alternatives whenever possible.
