@@ -43,7 +43,9 @@ Python’s `pickle` format implements a stack-based virtual machine. When an unt
 Safe static analysis and disassembly are conducted via:
 
 ```bash
-python3 -m pickletools suspicious_model.pkl
+python3 -m pickletools -a [-o FILE]
+
+Disassemble and optimize one or more pickle files.
 ```
 
 In the lab exercise, the payload triggers an outbound connection attempt to `attacker.com`.
