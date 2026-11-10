@@ -88,6 +88,20 @@ When consuming AI capabilities upstream via remote APIs:
 
 ---
 
+## Attack Vector Summary
+
+| Vector                     | Mechanism                                               | Detection Difficulty                     | Impact                                             |
+|----------------------------|---------------------------------------------------------|------------------------------------------|----------------------------------------------------|
+| Pickle `__reduce__`        | Embeds code in model files                              | Moderate: pickletools can reveal         | Code execution on model load                       |
+| Keras Lambda/custom layers | Embeds code in model architecture                       | Moderate: architecture inspection        | Code execution at inference time                   |
+| Dependency confusion       | Hijacks internal package names                          | Low: version anomalies visible           | Code execution on pip install                      |
+| Typosquatting              | Misspelt package names                                  | Low: name comparison reveals             | Code execution on pip install                      |
+| Repository manipulation    | Fake orgs, professional model cards                     | Moderate: reputation signals             | Trusted distribution of malicious models           |
+| API provider compromise    | Silent updates, key exposure, prompt template tampering | High: no file artefact to scan           | Invisible model substitution or data exfiltration  |
+| GGUF weight-level          | Backdoor fine-tuned into weights before quantisation    | High: no static analysis tools available | Triggered misclassification or output manipulation |
+
+---
+
 ## Defensive Perspective
 
 - Default to SafeTensors formats over pickle-based alternatives whenever possible.
