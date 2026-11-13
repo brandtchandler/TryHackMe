@@ -1,0 +1,79 @@
+# TryHackMe - Payload
+
+**Platform**: TryHackMe  
+**Difficulty**: Easy  
+**Category**: AI Security / AI Supply Chain  
+**Date**: 12 NOV 2026  
+**Time spent**: ~30–45 minutes (including write-up)  
+**Tags**: `#AISecurity` `#SupplyChain` `#MLModels` `#Pickle` `#IncidentResponse` `#TryHackMe`
+
+---
+
+## Summary
+
+Incident response style room focused on an **AI supply chain compromise**. TryTrainMe’s production code-review model starts making outbound connections to an unknown address. You investigate deployment logs, the production model, network/beacon traffic, and a staged candidate model to reconstruct the attack and recover the flag.
+
+## Key Takeaways / Personal Takeaways
+
+- ML model files (especially pickle-based) can contain executable code and should be treated with the same scrutiny as traditional software packages.
+- A model that “looks normal” can still embed shell execution, data exfiltration, or backdoors.
+- Supply-chain attacks against AI systems often involve swapping a trusted model for a malicious one from a different (sometimes deceptively named) organisation.
+- Effective investigation requires correlating multiple artefacts: deployment logs, model decompilation, and network beacon captures.
+- Detection gaps can be long — in this case the malicious model was active for **21 days** before the SOC alert.
+
+---
+
+## Learning Objectives
+
+- Investigate an AI/ML supply-chain incident
+- Analyse deployment logs to establish a timeline
+- Decompile and inspect malicious model files (pickle / .h5)
+- Identify embedded payloads and exfiltration behaviour
+- Correlate evidence across logs and model artefacts
+
+---
+
+## Learning Objectives & Tasks
+
+### Task 1 – The Incident
+
+**High-level investigation path:**
+
+1. **Establish the timeline**  
+   Review `/opt/supply-chain/incident/logs/deployment.log`  
+   - Identify the original model source organisation  
+   - Identify the replacement model organisation (`trustworthy-ai-lab`)  
+   - Calculate days between deployment and SOC alert (21 days)
+
+2. **Examine the production model**  
+   - Decompile the production model (e.g. with `pickletools` / `fickling`)  
+   - Identify the Python function used to execute shell commands (`system`)  
+   - Note the embedded command (commonly uses `hostname` for identification)
+
+3. **Analyse outbound / beacon traffic**  
+   - Review `beacon_capture.log`  
+   - Observe the HTTP method used for exfiltration (POST)  
+   - Recover the first half of the flag from the payload data
+
+4. **Assess the candidate replacement model**  
+   - Inspect the staged `.h5` model  
+   - Identify the suspicious layer (e.g. `manipulate_output`)  
+   - Recover the second half of the flag
+
+5. **Reconstruct the full flag** by combining both halves.
+
+---
+
+## Practical Notes
+
+- Useful tools available in the lab: `pickletools`, `fickling`, `modelscan`, `sha256sum`, and model inspection scripts.
+- Always compare against a clean baseline when one is provided.
+- Pay attention to source organisation names — attackers often use trustworthy-sounding names.
+- Flag is commonly split across different artefacts (beacon log + model file).
+
+---
+
+## References
+
+- TryHackMe room: https://tryhackme.com/room/payload  
+- Related concept rooms: Securing the AI Supply Chain, AI Models & Data  
