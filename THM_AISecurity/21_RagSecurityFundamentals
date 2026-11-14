@@ -1,0 +1,95 @@
+# TryHackMe - RAG Security Fundamentals
+
+**Platform**: TryHackMe  
+**Difficulty**: Easy  
+**Category**: AI Security / Data Poisoning  
+**Date**: 14 NOV 2026  
+**Time spent**: ~30 minutes (including write-up)  
+**Tags**: `#RAG` `#AISecurity` `#Retrieval` `#DataPoisoning` `#LLMSecurity` `#TryHackMe`
+
+---
+
+## Summary
+
+Introductory room that explains how **Retrieval-Augmented Generation (RAG)** systems work and why they create new security risks. It covers the RAG architecture, the unique attack surfaces introduced by retrieval, how attackers abuse context and trust boundaries, real-world failure cases, and high-level defensive considerations.
+
+## Key Takeaways / Personal Takeaways
+
+- RAG systems retrieve external documents at inference time and inject them into the LLM’s context. This improves accuracy but creates a new **trust boundary**.
+- The largest indirect attack surface in RAG is the **Retrieval** stage.
+- Embeddings capture meaning but lose important security context (source, permissions, intent).
+- Attackers can poison the knowledge base so malicious content ranks highly for sensitive queries (**Active manipulation** / passive poisoning).
+- Real-world failures (e.g. web-connected AI assistants) often stem from weak governance in the **retrieval pipeline**.
+- Defences should include behavioural monitoring and watching for gradual **output drift**, not just sudden failures.
+
+---
+
+## Learning Objectives
+
+- Understand how RAG systems work at a high level
+- Identify RAG-specific attack surfaces
+- Explain retrieval abuse and context manipulation techniques
+- Recognise real-world RAG failure patterns
+- Apply basic defensive considerations for RAG pipelines
+
+---
+
+## Learning Objectives & Tasks
+
+### Task 1 – Introduction
+Sets the stage for RAG and why traditional LLM security assumptions do not fully apply once external retrieval is added.
+
+### Task 2 – RAG Architecture Overview
+Covers the core components:
+- Embeddings (numerical representation of meaning)
+- Vector store
+- Retriever (selects documents for the LLM)
+- Context injection into the LLM
+
+### Task 3 – RAG-Specific Attack Surface
+Maps the main risk areas:
+- Document ingestion
+- Embedding generation
+- Similarity-based retrieval
+- Context injection
+
+Retrieval is highlighted as the stage that introduces the largest indirect attack surface. Context is lost during embedding generation.
+
+### Task 4 – Retrieval Abuse & Context Manipulation
+Explains attack techniques:
+- Passive poisoning (malicious document sits in the knowledge base)
+- Active manipulation (crafting content so it ranks highly for target queries)
+- Documents are selected by **semantic relevance**, not by trust or safety
+
+### Task 5 – Real-World RAG Failure Scenarios
+Reviews cases where failures were caused by governance gaps in the **retrieval pipeline** (e.g. web-connected AI assistants).
+
+### Task 6 – Defensive Considerations for RAG Systems
+High-level defences:
+- Stronger ingestion controls
+- Behavioural monitoring
+- Detection of gradual output drift / influence
+
+### Task 7 – Conclusion
+Recap of key concepts and transition to deeper rooms (e.g. Data Poisoning in RAG Systems).
+
+---
+
+## Practical Notes
+
+| Concept                        | Key Point                                      |
+|--------------------------------|------------------------------------------------|
+| Embeddings                     | Capture meaning of text                        |
+| Retriever                      | Selects documents for the LLM                  |
+| Largest attack surface         | Retrieval stage                                |
+| Lost during embedding          | Context (source, permissions, intent)          |
+| Active manipulation            | Craft content to rank highly for queries       |
+| Useful monitoring type         | Behavioural                                    |
+| Output drift reflects          | Gradual influence (not sudden failure)         |
+
+---
+
+## References
+
+- TryHackMe room: https://tryhackme.com/room/ragsecurityfundamentals  
+- Related rooms: Data Poisoning in RAG Systems, Sensitive Information Disclosure, UnIndexed, Lockdown  
