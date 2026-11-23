@@ -1,4 +1,4 @@
-# Data Poisoning in RAG Systems - Write-Up
+# Data Poisoning in RAG Systems
 
 **Room:** [TryHackMe - Data Poisoning in RAG Systems](https://tryhackme.com/room/datapoisoninginragsystems)  
 **Category:** AI / ML Security  
